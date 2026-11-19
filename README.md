@@ -1,6 +1,70 @@
 # Secure Cloud Storage — Қауіпсіз файл сақтау және алмасу жүйесі
 ## Жоба авторлары: Айдос, Бекзат, Мухамеджан, Еркебұлан, Жанболат  
 
+![CI](https://github.com/aidoswx/Team-security/actions/workflows/ci.yml/badge.svg)
+
+## Іске асырылған прототип (Code Review 20.11.2026)
+
+Бұл тармақта қауіпсіз файл сақтау жүйесінің тексеруге дайын негізгі прототипі бар:
+
+- клиент жағындағы AES-256-GCM шифрлау;
+- PBKDF2-HMAC-SHA-256 арқылы парольден кілт алу (210 000 итерация);
+- әр шифрлау үшін жаңа 16-байт salt және 12-байт IV;
+- файлдың SHA-256 тұтастық тексеруі;
+- серверде тек шифрланған `.scv` контейнерін сақтау;
+- файл нұсқалары және мерзімі бар access grant;
+- path traversal, қайталанған нұсқа және өзгертілген файлдан қорғау;
+- REST API, 20-дан көп JUnit тесті және GitHub Actions CI.
+
+> Серверге пароль, AES кілті немесе ашық файл жіберілмейді. Шифрлау мен дешифрлау
+> `LocalCryptoCli` арқылы пайдаланушы құрылғысында орындалады.
+
+### Жылдам іске қосу
+
+Қажет: JDK 17 немесе жаңа нұсқа. Maven-ді бөлек орнату қажет емес.
+
+```bash
+# Windows
+mvnw.cmd clean verify
+mvnw.cmd spring-boot:run
+
+# Linux/macOS
+./mvnw clean verify
+./mvnw spring-boot:run
+```
+
+Сервер әдепкіде `http://localhost:8080` адресінде іске қосылады. Шифрланған
+файлдар `./data/encrypted` ішінде сақталады; бұл каталог Git-ке қосылмайды.
+
+### Клиент жағында файлды шифрлау
+
+```bash
+mvnw.cmd package
+java -cp target/classes kz.edu.securecloud.client.LocalCryptoCli encrypt input.txt input.scv alice input.txt 1
+```
+
+Дешифрлау:
+
+```bash
+java -cp target/classes kz.edu.securecloud.client.LocalCryptoCli decrypt input.scv restored.txt alice input.txt 1
+```
+
+Пароль терминалда жасырын түрде сұралады. `ownerId`, бастапқы файл атауы және
+нұсқа нөмірі шифрлағанда және дешифрлағанда бірдей болуы тиіс.
+
+### REST API қысқаша
+
+| Әдіс | URL | Мақсаты |
+|---|---|---|
+| `POST` | `/api/files` | Дайын шифрланған `.scv` файлын жүктеу |
+| `GET` | `/api/files/{id}/versions` | Қолжетімді нұсқаларды көру |
+| `GET` | `/api/files/{id}/versions/{version}` | Шифрланған нұсқаны жүктеп алу |
+| `POST` | `/api/files/{id}/shares` | Мерзімі бар қолжетімділік беру |
+| `DELETE` | `/api/files/{id}/shares` | Қолжетімділікті қайтарып алу |
+
+Толық code review сценарийі [CODE_REVIEW.md](CODE_REVIEW.md), ал Trello карточкасының
+дайын үлгісі [docs/TRELLO.md](docs/TRELLO.md) файлында берілген.
+
 ## 1. Жоба туралы
 
 **Secure Cloud Storage** — Java тілінде жасалатын файлдарды қауіпсіз сақтау және алмасуға арналған бұлттық қойма жүйесі.

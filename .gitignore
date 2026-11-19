@@ -1,0 +1,24 @@
+# Build output
+target/
+out/
+
+# Runtime storage and local configuration
+data/
+.env
+*.key
+*.pem
+*.p12
+*.jks
+
+# IDE and operating-system files
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
