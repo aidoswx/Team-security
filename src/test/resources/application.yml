@@ -1,0 +1,2 @@
+secure-storage:
+  root: ${java.io.tmpdir}/secure-cloud-storage-tests

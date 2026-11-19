@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: secure-cloud-storage
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 52MB
+
+secure-storage:
+  root: ${SECURE_STORAGE_PATH:./data/encrypted}
+
+server:
+  error:
+    include-message: never
