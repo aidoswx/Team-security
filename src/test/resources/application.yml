@@ -1,0 +1,5 @@
+secure-storage:
+  root: ${java.io.tmpdir}/secure-cloud-storage-tests
+app:
+  alice-password: test-alice-password
+  bob-password: test-bob-password

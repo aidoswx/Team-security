@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: secure-cloud-storage
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 52MB
+secure-storage:
+  root: ${SECURE_STORAGE_PATH:./data/encrypted}
+  database: ${SECURE_STORAGE_DATABASE:./data/storage.db}
+app:
+  alice-password: ${APP_ALICE_PASSWORD}
+  bob-password: ${APP_BOB_PASSWORD}
+server:
+  address: 127.0.0.1
+  error:
+    include-message: never
